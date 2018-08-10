@@ -1,0 +1,17 @@
+E:\C#\M6620_id_check\M6620_id_check\obj\Debug\Interop.BarTender.dll
+E:\C#\M6620_id_check\M6620_id_check\obj\Debug\Production.csproj.ResolveComReference.cache
+E:\C#\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\Interop.BarTender.dll
+E:\C#\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\Production.csproj.ResolveComReference.cache
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\Interop.BarTender.dll
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\Production.csproj.ResolveComReference.cache
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\bin\Debug\M6620_id_check_V1.2.exe
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\bin\Debug\M6620_id_check_V1.2.pdb
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\bin\Debug\Newtonsoft.Json.dll
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\bin\Debug\NPOI.dll
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\Production.AllForms.FormBoard.resources
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\Production.AllForms.FormMain.resources
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\Production.AllForms.FormPlanCodeConfirm.resources
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\M6620_id_check.Properties.Resources.resources
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\Production.csproj.GenerateResource.Cache
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\M6620_id_check_V1.2.exe
+E:\2_工作和软件\1_工作存档\01长虹爱联\中移物联 GSM-M6220-北斗STD开机检查\2_source\source\170801M6620_id_check\source\M6620_id_check\M6620_id_check\obj\Debug\M6620_id_check_V1.2.pdb

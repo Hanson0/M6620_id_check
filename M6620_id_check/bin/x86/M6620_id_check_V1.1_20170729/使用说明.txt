@@ -1,0 +1,79 @@
+使用说明：
+ 
+    1.该软件为中移物联2G模块标签对比软件，软件版本：V1.0；主要功能是读出模块ID（SN、IMEI、EID、ICCID）并与标签IMEI比较一致性。
+
+    2.打开软件前请在配置文件SetUp.ini中配置以下信息：
+[Time]
+CheckDeviceInterval=500
+;循环检测设备状态时间间隔 ms
+
+[SerialPort]
+PortName=COM8
+;通信端口
+BaudRate=115200
+;波特率
+DataBits=8
+;每个字节的标准数据位长度	
+;大于5小于9的整数
+Parity=0
+;奇偶校验检查协议
+;0——无校验	1——奇校验	2——偶校验
+StopBits=1
+;每个字节的标准停止位长度
+;0——无	1——1位	2——2位	3——1.5位
+
+[Result]
+Pass=0
+Fail=0
+
+
+[Server]
+Ip=10.41.16.64
+;服务器IP地址
+Port=7777
+;服务器端口号
+
+UrlBaseInfoGet=/ilink/production/mobile/test/get/plan
+;基础数据获取
+UrlEidVeirfy=/ilink/production/mobile/test/verify/eid
+;Eid合法性查询
+UrlImeiAndSnGet=/ilink/production/mobile/test/get/imei&sn
+;imei/sn获取
+UrlEidUpload=/ilink/production/mobile/test/upload/eid
+;Eid过站上报
+UrlEidImeiSnUpload=/ilink/production/mobile/test/upload/eid&imei&sn&iccid
+;Eid、imei、sn过站上报
+UrlImeiSnDecorrelation=/ilink/production/mobile/test/clear/eid&imei&sn
+;imei/sn去关联
+UrlRepaireGetCount=/ilink/production/mobile/test/repair/count
+;获取维修数量
+UrlRepairIn=/ilink/production/mobile/test/repair/in
+;进入维修
+UrlRepairOut=/ilink/production/mobile/test/repair/out
+;退出维修
+UrlPackageSmallUpload=/ilink/production/package/small
+;上报装箱清单
+UrlPackageSmallGet=/ilink/production/package/small/numberSmall/
+;获取装箱清单
+
+[ProductionInfo]
+ProductModel=R-GSM模组GSM-M6220C-GPS-A（JUI2.891.027）
+;产品型号
+CustomerName=中移物联
+;客户信息
+PlanCode=P20170320001
+;计划单号
+Procedure=10003
+;工序号
+Station=01
+;工位号
+
+[Path]
+LogPath=./Log/
+
+
+
+
+
+    3.操作方法：
+	根据需要在服务器配置好基础数据，搭好工位，配制好软件配置文件，打开软件，标签IMEI文本框扫码后，插上模块软件自动运行。
