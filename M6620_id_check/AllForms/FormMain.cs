@@ -1,5 +1,6 @@
 ﻿using Production.ProductionTest;
 using Production.Result;
+using Production.Server;
 using Production.Windows;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,7 @@ namespace Production.AllForms
                 frmPlanCodeConfirm.ShowDialog();
                 txtLabelImei.Focus();
             }
+
         }
 
 

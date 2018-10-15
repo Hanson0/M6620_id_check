@@ -10,7 +10,7 @@ namespace Production.Server
     static class HttpServerInfo
     {
         private static string fileSetup;
-
+        private static string fileConfigOfMes;
 
         private static string ip;                               //IP地址
         private static string port;                             //端口号
@@ -72,6 +72,13 @@ namespace Production.Server
             eidImeiSnUpload,                //eid、imei、sn上报(只适合imei写号工序)
             imeiSnDecorrelation,            //imei、sn去关联
             eidImeiSnIccidCheck,            //对比服务器上关联的imei、Eid、Sn、Iccid
+
+            //读取ConfigOfMes.ini中
+            //baseInfoOfMes,                  //基本信息获取
+            eidBindImei,                    //eid绑定imei
+            imeiBindingParamUpdate,         //imei绑定参数更新
+            imeiPrint,                      //参数下拉                  
+
             
             repaireIn,                      //进入维修
             repaireOut,                     //退出维修
@@ -90,6 +97,7 @@ namespace Production.Server
         {
             StringBuilder stringBuilder = new StringBuilder();
             fileSetup = ConfigInfo.ConfigPath;
+            fileConfigOfMes = ConfigInfo.ConfigPath.Replace("SetUp", "ConfigOfMes");
             urls = new Dictionary<string, string>();
 
             //EndPoint
@@ -114,10 +122,24 @@ namespace Production.Server
             Win32API.GetPrivateProfileString("Server", "UrlImeiSnDecorrelation", "", stringBuilder, 256, fileSetup);
             urls.Add(EnumUrlType.imeiSnDecorrelation.ToString(), urlPrefix + stringBuilder.ToString().Trim());
 
+
+
             //对比
             Win32API.GetPrivateProfileString("Server", "UrlEidImeiSnIccidCheck", "", stringBuilder, 256, fileSetup);
             urls.Add(EnumUrlType.eidImeiSnIccidCheck.ToString(), urlPrefix + stringBuilder.ToString().Trim());
-            
+
+            //Imes的基础url获取
+            Win32API.GetPrivateProfileString("Server", "baseurl", "", stringBuilder, 256, fileConfigOfMes);
+            string baseUrl = stringBuilder.ToString().Trim();
+            //imei绑定
+            Win32API.GetPrivateProfileString("Server", "url_imeiBinding", "", stringBuilder, 256, fileConfigOfMes);
+            urls.Add(EnumUrlType.eidBindImei.ToString(), baseUrl + stringBuilder.ToString().Trim());
+            //imei绑定参数更新
+            Win32API.GetPrivateProfileString("Server", "url_imeiBindingParamUpdate", "", stringBuilder, 256, fileConfigOfMes);
+            urls.Add(EnumUrlType.imeiBindingParamUpdate.ToString(), baseUrl + stringBuilder.ToString().Trim());
+            //imei参数下拉
+            Win32API.GetPrivateProfileString("Server", "url_imeiPrint", "", stringBuilder, 256, fileConfigOfMes);
+            urls.Add(EnumUrlType.imeiPrint.ToString(), baseUrl + stringBuilder.ToString().Trim());
 
             Win32API.GetPrivateProfileString("Server", "UrlRepairIn", "", stringBuilder, 256, fileSetup);
             urls.Add(EnumUrlType.repaireIn.ToString(), urlPrefix + stringBuilder.ToString().Trim());

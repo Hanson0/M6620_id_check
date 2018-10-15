@@ -34,7 +34,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UnitTest0</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -99,6 +99,8 @@
     <Compile Include="IdReadWrite\Cmd\ATCmd.cs" />
     <Compile Include="IdReadWrite\Cmd\ATReadCmd.cs" />
     <Compile Include="IdReadWrite\Cmd\ATWriteCmd.cs" />
+    <Compile Include="MyException.cs" />
+    <Compile Include="ProductionTest\NewHttpImeiPrint.cs" />
     <Compile Include="ProductionTest\ProductionTestFlow.cs" />
     <Compile Include="ProductionTest\ProductionTestFactory.cs" />
     <Compile Include="AllForms\FormMain.cs">
@@ -128,7 +130,10 @@
     <Compile Include="Server\HttpServerInfo.cs" />
     <Compile Include="Server\HttpRequestTask.cs" />
     <Compile Include="Server\HttpEidVerify.cs" />
+    <Compile Include="Server\NewHttpEidBindImei.cs" />
+    <Compile Include="Server\NewHttpImeiPrint.cs" />
     <Compile Include="Server\ReturnCode.cs" />
+    <Compile Include="Server\ToImesInterface.cs" />
     <Compile Include="Tools\MyStopwatch.cs" />
     <Compile Include="Windows\Win32API.cs" />
     <EmbeddedResource Include="AllForms\FormBoard.resx">

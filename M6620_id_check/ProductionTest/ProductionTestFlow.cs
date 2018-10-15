@@ -38,6 +38,7 @@ namespace Production.ProductionTest
         private bool flagCreateNewRow;
         private static int compareEidIccid;
         private static string versonIni;
+        private int judgeStandard;
 
         public static string VersonIni
         {
@@ -88,7 +89,17 @@ namespace Production.ProductionTest
                 planCode = value;
             }
         }
+        public int JudgeStandard
+        {
+            get
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                Win32API.GetPrivateProfileString("Compare", "JudgeStandard", "", stringBuilder, 256, configPath);
+                judgeStandard = int.Parse(stringBuilder.ToString());
+                return judgeStandard;
 
+            }
+        }
 
         /// <summary>
         /// 构造函数
@@ -97,7 +108,7 @@ namespace Production.ProductionTest
         /// <param name="planCode"></param>
         /// <param name="procedure"></param>
         /// <param name="station"></param>
-        public ProductionTestFlow(AllForms.FormMain frmMain, string planCode,string procedure,string station)
+        public ProductionTestFlow(AllForms.FormMain frmMain, string planCode, string procedure, string station)
         {
             this.frmMain = frmMain;
             this.planCode = planCode;
@@ -133,7 +144,7 @@ namespace Production.ProductionTest
         {
             this.labelImei = labelImei;
             runState = true;
-            flagCreateNewRow = false;           
+            flagCreateNewRow = false;
 
             readWriteIdHandle.FlagDisplayUart = true;
 
@@ -150,7 +161,7 @@ namespace Production.ProductionTest
                 resultJudge.Eid = eidRead;
                 resultJudge.Iccid = iccidRead;
             }
-            resultJudge.PutResult(eidRead,ret);
+            resultJudge.PutResult(eidRead, ret);
 
             runState = false;
             readWriteIdHandle.FlagDisplayUart = false;
@@ -180,6 +191,7 @@ namespace Production.ProductionTest
             {
                 //从芯片获取eid
                 //eidRead = "081603FFFFF35293" + eidlast.ToString("X").PadLeft(4,'0');
+                //int readRet = 1;
                 eidRead = readWriteIdHandle.ReadId(ATReadCmd.ReadIdType.EidRead);
                 pattern = @"[0-9A-Z]{20}";
                 if (string.IsNullOrEmpty(eidRead) || !Regex.IsMatch(eidRead, pattern))
@@ -194,12 +206,17 @@ namespace Production.ProductionTest
                 //从芯片读出SN
                 snRead = readWriteIdHandle.ReadId(ATReadCmd.ReadIdType.SnRead);
                 pattern = @"^[0-9A-Z]{16}$";
-                if (string.IsNullOrEmpty(snRead) || !Regex.IsMatch(snRead, pattern))
+                if (string.IsNullOrEmpty(snRead))
                 {
-                    frmMain.DisplayLog("SN读取失败\r\n");
+                    frmMain.DisplayLog("SN为空读取失败\r\n");
                     break;
                 }
-                frmMain.DisplayLog(string.Format("已获取模块SN：{0}\r\n", snRead));
+                if (!Regex.IsMatch(snRead, pattern))
+                {
+                    frmMain.DisplayLog("SN合法性检查:SN不合法败\r\n");
+                    break;
+                }
+                frmMain.DisplayLog(string.Format("已获取模块合法SN：{0}\r\n", snRead));
                 frmMain.SetText(AllForms.EnumControlWidget.txtSn.ToString(), snRead, false);
 
                 //从芯片读出IMEI
@@ -250,7 +267,7 @@ namespace Production.ProductionTest
                 //判断IMEI与标签IMEI是否一致
                 if (labelImei == imeiRead)
                 {
-                    frmMain.DisplayLog(string.Format("标签IMEI：{0}与模块IMEI：{1}对比一致 PASS\r\n",labelImei, imeiRead));
+                    frmMain.DisplayLog(string.Format("标签IMEI：{0}与模块IMEI：{1}对比一致 PASS\r\n", labelImei, imeiRead));
                 }
                 else
                 {
@@ -263,19 +280,38 @@ namespace Production.ProductionTest
                 {
                     string lastSixIccid = iccidRead.Substring(iccidRead.Length - 6);
                     string lastSixEid = eidRead.Substring(eidRead.Length - 6);
-                    if (lastSixIccid == lastSixEid)
+                    if (JudgeStandard==0)
                     {
-                        frmMain.DisplayLog(string.Format("空中写号检查：未做。详细：后6位的eid:{0} 与 iccid:{1} 完全一致 FAIL\r\n", lastSixEid, lastSixIccid));
-                        break;
-                        //ret = -1;
-                        //return ret;
+                        //一样 FAIL
+                        if (lastSixIccid == lastSixEid)
+                        {
+                            frmMain.DisplayLog(string.Format("空中写号检查：未做。详细：后6位的eid:{0} 与 iccid:{1} 完全一致 FAIL\r\n", lastSixEid, lastSixIccid));
+                            break;
+                            //ret = -1;
+                            //return ret;
+                        }
+                        else
+                        {
+                            frmMain.DisplayLog(string.Format("空中写号检查：通过。详细：后6位的eid:{0} 与 iccid:{1}不一致 PASS\r\n", lastSixEid, lastSixIccid));
+                        }
                     }
-                    else
+                    else if (JudgeStandard ==1)
                     {
-                        frmMain.DisplayLog(string.Format("空中写号检查：通过。详细：后6位的eid:{0} 与 iccid:{1}不一致 PASS\r\n", lastSixEid, lastSixIccid));
+                        //一样 PASS
+                        if (lastSixIccid != lastSixEid)
+                        {
+                            frmMain.DisplayLog(string.Format("空中写号检查：未做。详细：后6位的eid:{0} 与 iccid:{1} 不一致 FAIL\r\n", lastSixEid, lastSixIccid));
+                            break;
+                            //ret = -1;
+                            //return ret;
+                        }
+                        else
+                        {
+                            frmMain.DisplayLog(string.Format("空中写号检查：通过。详细：后6位的eid:{0} 与 iccid:{1}完全一致 PASS\r\n", lastSixEid, lastSixIccid));
+                        }
+
                     }
                 }
-
                 //离线查重IMEI
                 if (ProductionInfo.Type == ProductionInfo.SystemType.Offline)
                 {
@@ -294,6 +330,85 @@ namespace Production.ProductionTest
                 }
 
                 #region
+                if (systemType == ProductionInfo.SystemType.iMES)
+                {
+                    //调用打印接口下拉eid相关信息rep，为了生成Log作准备
+                    Production.Server.NewHttpImeiPrint.ResponseInfo rep;
+                    string errorInfo;
+                    ret = ToImesInterface.ImeiPrint(out rep, imeiRead, out errorInfo);
+                    //ImeiPrint(out rep);
+                    if (ret != 0)
+                    {
+                        //显示结果：下拉失败,并改变颜色
+                        frmMain.DisplayLog("从IMES下拉信息失败" + errorInfo + "\r\n");
+                        break;
+                    }
+                    frmMain.DisplayLog("从IMES下拉信息成功\r\n");
+                    //模组读出的和IMES下拉的是否相同
+                    //IMEI,PUBLICSN,ICCID,IMSI,EID,IMEIBINDINGSN,DATE
+                    //"sn":123456789012345,AI18082202000001,,,,,8822
+                    string[] idNumber = rep.sn.ToUpper().Split(',');
+                    #region 比对
+                    #region IMEI
+                    if (idNumber[0] == "")
+                    {
+                        frmMain.DisplayLog(string.Format("服务器IMEI获取为空 FAIL\r\n"));
+                        ret = -1;
+                        break;
+                    }
+                    if (idNumber[0] != imeiRead.ToUpper())
+                    {
+                        frmMain.DisplayLog(string.Format("服务器IMEI:{0} 与 模块IMEI:{1} 不一致 FAIL\r\n", idNumber[0], imeiRead));
+                        ret = -1;
+                        break;
+                    }
+                    else
+                    {
+                        frmMain.DisplayLog(string.Format("服务器IMEI:{0} 与 模块IMEI:{1} 一致 PASS\r\n", idNumber[0], imeiRead));
+                    }
+                    #endregion
+                    #region SN
+                    if (idNumber[1] != snRead.ToUpper())
+                    {
+                        frmMain.DisplayLog(string.Format("服务器SN:{0} 与 模块SN:{1} 不一致 FAIL\r\n", idNumber[1], snRead));
+                        ret = -1;
+                        break;
+                    }
+                    else
+                    {
+                        frmMain.DisplayLog(string.Format("服务器SN:{0} 与 模块SN:{1} 一致 PASS\r\n", idNumber[1], snRead));
+                    }
+                    #endregion
+
+                    #region ICCID
+                    if (idNumber[2] != iccidRead.ToUpper())
+                    {
+                        frmMain.DisplayLog(string.Format("服务器ICCID:{0} 与 模块ICCID:{1} 不一致 FAIL\r\n", idNumber[2], iccidRead));
+                        ret = -1;
+                        break;
+                    }
+                    else
+                    {
+                        frmMain.DisplayLog(string.Format("服务器ICCID:{0} 与 模块ICCID:{1} 一致 PASS\r\n", idNumber[2], iccidRead));
+                    }
+                    #endregion
+
+                    #region EID
+                    if (idNumber[4] != eidRead.ToUpper())
+                    {
+                        frmMain.DisplayLog(string.Format("服务器EID:{0} 与 模块EID:{1} 不一致 FAIL\r\n", idNumber[4], eidRead));
+                        ret = -1;
+                        break;
+                    }
+                    else
+                    {
+                        frmMain.DisplayLog(string.Format("服务器EID:{0} 与 模块EID:{1} 一致 PASS\r\n", idNumber[4], eidRead));
+                    }
+                    #endregion
+
+                    #endregion
+                }
+
                 if (systemType == ProductionInfo.SystemType.GSMMES)
                 {
                     //EID合法性检查
@@ -336,7 +451,7 @@ namespace Production.ProductionTest
             #region 离线 记录到Excel
             if (ProductionInfo.Type == ProductionInfo.SystemType.Offline)
             {
-                if (ret== 0)
+                if (ret == 0)
                 {
                     JiaHao.ExcelHelp.ExcelHelper excel = JiaHao.ExcelHelp.ExcelHelper.GetExcelHelperInstance();
                     excel.ExportExcelOneByOne(new JiaHao.ExcelHelp.ExcelHelper.TrayInfoInExcel()
@@ -354,6 +469,43 @@ namespace Production.ProductionTest
             #endregion
             return ret;
         }
+
+        /// <summary>
+        /// imei绑定
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="log"></param>
+        /// <returns></returns>
+        private int EidBindImei(out Production.Server.NewHttpEidBindImei.ResponseInfo2 rep)//int result, string log
+        {
+            int ret = -1;
+            rep = null;
+            NewHttpEidBindImei httpEidUpload = new NewHttpEidBindImei();
+            try
+            {
+                ret = httpEidUpload.DataGetAndAnalysis(out rep, null, null, null, eidRead, null);
+                if (ret != 0)
+                {
+                    //frmMain.DisplayLog(((ReturnCode)httpEidImeiSnUpload.Response.code).ToString());
+                    frmMain.DisplayLog("绑定失败\r\n");
+                    //frmMain.DisplayLog(httpEidUpload.Response.data.message + "\r\n");
+                }
+                else
+                {
+                    frmMain.DisplayLog(string.Format("{0}\r\n", "绑定成功"));
+                    ret = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                frmMain.DisplayLog(ex.ToString() + "\r\n");
+            }
+
+            return ret;
+        }
+
+
+
 
         public void StartTimeoutTimer()
         {
@@ -443,7 +595,7 @@ namespace Production.ProductionTest
                 }
                 else
                 {
-                    frmMain.DisplayLog(string.Format("{0}\r\n","Eid合法性检查通过"));
+                    frmMain.DisplayLog(string.Format("{0}\r\n", "Eid合法性检查通过"));
                     ret = 0;
                 }
             }
@@ -533,7 +685,7 @@ namespace Production.ProductionTest
             HttpImeiSnDecorrelation httpImeiSnDecorrelation = new HttpImeiSnDecorrelation();
             try
             {
-                ret = httpImeiSnDecorrelation.DataGetAndAnalysis(imeiRead, snRead,planCode);
+                ret = httpImeiSnDecorrelation.DataGetAndAnalysis(imeiRead, snRead, planCode);
                 if (ret != 0)
                 {
                     //frmMain.DisplayLog(((ReturnCode)httpImeiSnDecorrelation.Response.code).ToString());
@@ -566,7 +718,7 @@ namespace Production.ProductionTest
             HttpAllCheck httpImeiSnDecorrelation = new HttpAllCheck();
             try
             {
-                ret = httpImeiSnDecorrelation.DataGetAndAnalysis(planCode,eidRead,imeiRead, snRead,iccidRead );
+                ret = httpImeiSnDecorrelation.DataGetAndAnalysis(planCode, eidRead, imeiRead, snRead, iccidRead);
                 if (ret != 0)
                 {
                     //frmMain.DisplayLog(((ReturnCode)httpImeiSnDecorrelation.Response.code).ToString());
